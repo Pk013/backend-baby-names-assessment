@@ -102,8 +102,8 @@ def main():
     # For each filename, get the names, then either print the text output
     # or write it to a summary fil
      for filename in args:
-        names = extract_names(filename)
-        text = '\n'.join(names)
+        result = extract_names(filename)
+        text = '\n'.join(result)
 
         if summary:
             outf = open(filename + '.summary', 'w')
