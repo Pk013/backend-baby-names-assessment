@@ -45,8 +45,34 @@ def extract_names(filename):
     followed by the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
     """
-    # +++your code here+++
-    return
+    result = []
+    with open(filename) as f:
+        text = f.read()
+
+    year_match = re.search(r"Popularity\sin\s(\d\d\d\d)", text)
+    if not year_match:
+        print("could not extract year")
+        return None
+    year = year_match.group(1)
+    print("found year: {}".format(year))
+    result.append(year)
+    
+    tuples = re.findall(r"<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>", text)
+
+    names_to_rank = {}
+    for rank, boy, girl in tuples:
+        if boy not in names_to_rank:
+            names_to_rank[boy] = rank
+        if girl not in names_to_rank:
+            names_to_rank[girl] = rank
+
+    sorted_names = sorted(names_to_rank.keys())
+    for name in sorted_names:
+        result.append(name + ' ' +names_to_rank[name])
+
+
+
+    return result
 
 
 def create_parser():
@@ -61,22 +87,30 @@ def create_parser():
 
 
 def main():
-    parser = create_parser()
-    args = parser.parse_args()
+     args = sys.argv[1:]
 
-    if not args:
-        parser.print_usage()
+     if not args:
+        print ('usage: [--summaryfile] file [file ...]')
         sys.exit(1)
-
-    file_list = args.files
-
-    # option flag
-    create_summary = args.summaryfile
+        
+        summary = False
+     if args[0] == '--summaryfile':
+        summary = True
+        del args[0]
 
     # +++your code here+++
     # For each filename, get the names, then either print the text output
-    # or write it to a summary file
+    # or write it to a summary fil
+     for filename in args:
+        names = extract_names(filename)
+        text = '\n'.join(names)
 
+        if summary:
+            outf = open(filename + '.summary', 'w')
+            outf.write(text + '\n')
+            outf.close()
+        else:
+            print (text)
 
 if __name__ == '__main__':
     main()
