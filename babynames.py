@@ -87,30 +87,25 @@ def create_parser():
 
 
 def main():
-     args = sys.argv[1:]
+    parser = create_parser()
+    args = parser.parse_args()
 
-     if not args:
-        print ('usage: [--summaryfile] file [file ...]')
+    if not args:
+        parser.print_usage()
         sys.exit(1)
-        
-        summary = False
-     if args[0] == '--summaryfile':
-        summary = True
-        del args[0]
 
-    # +++your code here+++
     # For each filename, get the names, then either print the text output
     # or write it to a summary fil
-     for filename in args:
+    
+    for filename in args.files:
         result = extract_names(filename)
         text = '\n'.join(result)
 
-        if summary:
-            outf = open(filename + '.summary', 'w')
-            outf.write(text + '\n')
-            outf.close()
+        if args.summaryfile:
+            with open(filename + '.summary', 'w') as outf:
+                outf.write(text + '\n')
         else:
-            print (text)
+            print(text)
 
 if __name__ == '__main__':
     main()
